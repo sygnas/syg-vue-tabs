@@ -1,0 +1,23 @@
+{
+  "name": "@sygnas/vue-tabs",
+  "version": "0.1.0",
+  "description": "",
+  "main": "src/tab.vue",
+  "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sygnas/syg-vue-tabs.git"
+  },
+  "scripts": {
+  },
+  "keywords": [
+    "vue",
+    "tab"
+  ],
+  "author": "Hiroshi Fukuda <info.sygnas@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+  },
+  "dependencies": {
+  }
+}
