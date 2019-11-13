@@ -1,6 +1,6 @@
 {
   "name": "@sygnas/vue-tabs",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "dist/syg-vue-tabs.js",
   "module": "dist/syg-vue-tabs.es.js",
