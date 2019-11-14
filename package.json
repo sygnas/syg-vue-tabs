@@ -1,45 +1,51 @@
 {
   "name": "@sygnas/vue-tabs",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "",
-  "main": "dist/syg-vue-tabs.js",
-  "module": "dist/syg-vue-tabs.es.js",
-  "moduleName": "syg-vue-tabs",
-  "private": false,
+  "author": "Hiroshi Fukuda <info.sygnas@gmail.com>",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/sygnas/syg-vue-tabs.git"
-  },
-  "scripts": {
-    "start": "npm run watch",
-    "watch": "NODE_ENV=example rollup -w -c rollup.config.js",
-    "dev": "NODE_ENV=development rollup -c rollup.config.js",
-    "prod": "NODE_ENV=production rollup -c rollup.config.js",
-    "production": "rm -rf dist && npm run prod",
-    "lint": "eslint src"
   },
   "keywords": [
     "vue",
     "tab"
   ],
-  "author": "Hiroshi Fukuda <info.sygnas@gmail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "babel-core": "6.26.0",
-    "babel-eslint": "8.2.1",
-    "babel-plugin-external-helpers": "6.22.0",
-    "babel-plugin-transform-runtime": "6.23.0",
-    "babel-preset-env": "1.6.1",
-    "babel-runtime": "6.26.0",
-    "eslint": "4.17.0",
-    "rollup": "^0.55.3",
-    "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-commonjs": "^8.3.0",
-    "rollup-plugin-node-resolve": "^3.0.2",
-    "rollup-plugin-sourcemaps": "^0.4.2",
-    "rollup-plugin-uglify": "^3.0.0",
-    "rollup-plugin-vue": "^4.3.2",
-    "vue-template-compiler": "^2.5.17"
+
+  "main": "dist/vue-tabs.ssr.js",
+  "module": "dist/vue-tabs.esm.js",
+  "unpkg": "dist/vue-tabs.min.js",
+
+  "files": [
+    "dist/*",
+    "src/**/*.vue"
+  ],
+
+  "scripts": {
+    "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
+    "build:ssr": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format cjs",
+    "build:es": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format es",
+    "build:unpkg": "cross-env NODE_ENV=production rollup --config build/rollup.config.js --format iife"
   },
-  "dependencies": {}
+
+  "dependencies": {
+  },
+
+  "devDependencies": {
+    "@rollup/plugin-alias": "^2.2.0",
+    "@rollup/plugin-buble": "^0.20.0",
+    "@rollup/plugin-replace": "^2.2.1",
+    "cross-env": "^6.0.3",
+    "minimist": "^1.2.0",
+    "rollup": "^1.26.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-terser": "^5.1.2",
+    "rollup-plugin-vue": "5.1.1",
+    "vue": "^2.6.10",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "engines": {
+    "node": ">=8"
+  }
 }
