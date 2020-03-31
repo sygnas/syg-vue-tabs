@@ -1,94 +1,83 @@
-// 共通のタブコンポーネント
-<!--
-<syg-tabs
-  :class-tab="c-tabmenu"
-  :class-item="c-tabmenu__item"
-  :class-link="c-tabmenu__link"
-  :items="[
-    { name: 'all', text: 'ALL' },
-    { name: 'type', params: { tab: 'bd' }, text: 'BD &amp; DVD' },
-    { name: 'type', params: { tab: 'music' }, text: 'MUSIC' },
-    { name: 'type', params: { tab: 'others' }, text: 'OTHERS' },
-    { type: 'external', url: 'https://twitter.com/', text: 'Twitter' },
-  ]"
-  :default="{ nane: 'type', params: { tab: 'all' } }"
->
-  </syg-tabs>
-
-<div v-if="$route.params.tab === 'bd'">
-   〜〜
-  </div>
-
-<div v-if="$route.params.tab === 'music'">
-   〜〜
-  </div>
--->
-
 <template>
-  <ul :class="classTab">
-    <li v-for="(item, index) in items" :key="index" :class="classItem">
-      <a v-if="item.type === 'external'" :href="item.url" :class="classLink" v-html="item.text">
-      </a>
+  <section :class="classWrapper">
+    <nav :class="classTabs">
+      <vue-tabs-item v-for="(item, index) in items"
+        :key="index"
+        :now-id="nowId"
+        :id="item.id"
+        :href="item.href"
+        :is-blank="item.isBlank"
+        :class-link="classLink"
+        v-html="item.value"
+        @click="click"
+      >
+      </vue-tabs-item>
+    </nav>
 
-      <router-link v-else :to="{ name: item.name, params: item.params }" :class="classLink" v-html="item.text">
-      </router-link>
-    </li>
-  </ul>
+    <slot :nowId="nowId"></slot>
+  </section>
 </template>
 
 <script>
+import VueTabsItem from './vue-tabs-item.vue';
+
 export default {
+  components:{
+    VueTabsItem,
+  },
   props: {
-    // タブグループ class
-    classTab: {
+   // デフォルトでアクティブにするタブ
+    defaultId: {
       type: String,
       default() {
-        return 'c-tabmenu';
-      },
-    },
-    // タブアイテム class
-    classItem: {
-      type: String,
-      default() {
-        return 'c-tabmenu__item';
-      },
-    },
-    // リンク class
-    classLink: {
-      type: String,
-      default() {
-        return 'c-tabmenu__link';
-      },
-    },
-    // デフォルトでアクティブにするタブ
-    default: {
-      type: Object,
-      default() {
-        return {
-          name: 'tab',
-          params: { tab: 'item1' },
-        };
+        return "";
       },
     },
     // タブアイテムの配列
     items: {
       type: Array,
-      required: true,
       default() {
         return [
           {
-            name: 'tab',
-            params: { tab: 'item1' }, // $route.params に与えるObject
-            text: 'Tab', // 表示するテキスト
+            id: 'tab',
+            href: '',
+            isBlank: false,
+            value: 'タブ',
           },
         ];
       },
     },
+    // wrapper class
+    classWrapper: {
+      type: String,
+      default() {
+        return "c-tabmenu-wrapper";
+      }
+    },
+    // タブグループ class
+    classTabs: {
+      type: String,
+      default() {
+        return "c-tabmenu";
+      },
+    },
+     // リンク class
+    classLink: {
+      type: String,
+      default() {
+        return "c-tabmenu__link";
+      },
+    },
   },
-  mounted() {
-    if (this.default.name && !this.$route.params.tab) {
-      this.$router.replace(this.default);
-    }
+  data() {
+    return {
+      nowId: this.defaultId,
+    };
+  },
+  methods: {
+    click(targetId){
+      this.nowId = targetId;
+    },
   },
 };
 </script>

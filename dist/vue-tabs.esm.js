@@ -11,84 +11,77 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
 var script = {
   props: {
-    // タブグループ class
-    classTab: {
+    // 現在アクティブな識別子
+    nowId: {
       type: String,
-      default: function default$1() {
-        return 'c-tabmenu';
-      },
+
+      default() {
+        return "";
+      }
+
     },
-    // タブアイテム class
-    classItem: {
+    // タブ切り替え対象のターゲット識別子
+    id: {
       type: String,
-      default: function default$2() {
-        return 'c-tabmenu__item';
-      },
+
+      default() {
+        return "";
+      }
+
+    },
+    // url（外部リンクの場合）
+    href: {
+      type: String,
+
+      default() {
+        return "";
+      }
+
+    },
+    // 別窓開くか
+    isBlank: {
+      type: Boolean,
+
+      default() {
+        return false;
+      }
+
     },
     // リンク class
     classLink: {
       type: String,
-      default: function default$3() {
-        return 'c-tabmenu__link';
-      },
-    },
-    // デフォルトでアクティブにするタブ
-    default: {
-      type: Object,
-      default: function default$4() {
-        return {
-          name: 'tab',
-          params: { tab: 'item1' },
-        };
-      },
-    },
-    // タブアイテムの配列
-    items: {
-      type: Array,
-      required: true,
-      default: function default$5() {
-        return [
-          {
-            name: 'tab',
-            params: { tab: 'item1' }, // $route.params に与えるObject
-            text: 'Tab', // 表示するテキスト
-          } ];
-      },
-    },
-  },
-  mounted: function mounted() {
-    if (this.default.name && !this.$route.params.tab) {
-      this.$router.replace(this.default);
+
+      default() {
+        return "c-tabmenu__link";
+      }
+
     }
   },
+  computed: {
+    isActive() {
+      // 外部リンクはアクティブ状態にならない
+      if (this.href) return false; // 現在のアクティブIDと、自分のIDが同じならアクティブ
+
+      if (this.nowId === this.id) return true;
+      return false;
+    }
+
+  },
+  methods: {
+    /**
+     * クリックしたら発火
+     * 外部リンクなら無視。
+     * 自分の所有IDを返す。
+     */
+    clickLink(e) {
+      if (this.href) return true;
+      this.$emit("click", this.id);
+      e.preventDefault();
+    }
+
+  }
 };
 
 function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -98,7 +91,7 @@ function normalizeComponent(template, style, script, scopeId, isFunctionalTempla
         shadowMode = false;
     }
     // Vue.extend constructor export interop.
-    var options = typeof script === 'function' ? script.options : script;
+    const options = typeof script === 'function' ? script.options : script;
     // render functions
     if (template && template.render) {
         options.render = template.render;
@@ -113,7 +106,7 @@ function normalizeComponent(template, style, script, scopeId, isFunctionalTempla
     if (scopeId) {
         options._scopeId = scopeId;
     }
-    var hook;
+    let hook;
     if (moduleIdentifier) {
         // server build
         hook = function (context) {
@@ -151,7 +144,7 @@ function normalizeComponent(template, style, script, scopeId, isFunctionalTempla
     if (hook) {
         if (options.functional) {
             // register for functional component in vue file
-            var originalRender = options.render;
+            const originalRender = options.render;
             options.render = function renderWithStyleInjection(h, context) {
                 hook.call(context);
                 return originalRender(h, context);
@@ -159,7 +152,7 @@ function normalizeComponent(template, style, script, scopeId, isFunctionalTempla
         }
         else {
             // inject component registration as beforeCreate hook
-            var existing = options.beforeCreate;
+            const existing = options.beforeCreate;
             options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
         }
     }
@@ -167,73 +160,219 @@ function normalizeComponent(template, style, script, scopeId, isFunctionalTempla
 }
 
 /* script */
-var __vue_script__ = script;
-
+const __vue_script__ = script;
 /* template */
-var __vue_render__ = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;return _c('ul',{class:_vm.classTab},_vm._l((_vm.items),function(item,index){return _c('li',{key:index,class:_vm.classItem},[(item.type === 'external')?_c('a',{class:_vm.classLink,attrs:{"href":item.url},domProps:{"innerHTML":_vm._s(item.text)}}):_c('router-link',{class:_vm.classLink,attrs:{"to":{ name: item.name, params: item.params }},domProps:{"innerHTML":_vm._s(item.text)}})],1)}),0)};
+
+var __vue_render__ = function () {
+  var _vm = this;
+
+  var _h = _vm.$createElement;
+
+  var _c = _vm._self._c || _h;
+
+  return _c('a', {
+    class: _vm.classLink,
+    attrs: {
+      "target": _vm.isBlank ? '_blank' : '',
+      "rel": _vm.isBlank ? 'noopener noreferrer' : '',
+      "href": _vm.href,
+      "data-active": _vm.isActive ? 'true' : ''
+    },
+    on: {
+      "click": _vm.clickLink
+    }
+  }, [_vm._t("default")], 2);
+};
+
 var __vue_staticRenderFns__ = [];
+/* style */
 
-  /* style */
-  var __vue_inject_styles__ = undefined;
-  /* scoped */
-  var __vue_scope_id__ = undefined;
-  /* module identifier */
-  var __vue_module_identifier__ = undefined;
-  /* functional template */
-  var __vue_is_functional_template__ = false;
-  /* style inject */
-  
-  /* style inject SSR */
-  
-  /* style inject shadow dom */
-  
+const __vue_inject_styles__ = undefined;
+/* scoped */
 
-  
-  var component = normalizeComponent(
-    { render: __vue_render__, staticRenderFns: __vue_staticRenderFns__ },
-    __vue_inject_styles__,
-    __vue_script__,
-    __vue_scope_id__,
-    __vue_is_functional_template__,
-    __vue_module_identifier__,
-    false,
-    undefined,
-    undefined,
-    undefined
-  );
+const __vue_scope_id__ = undefined;
+/* module identifier */
+
+const __vue_module_identifier__ = undefined;
+/* functional template */
+
+const __vue_is_functional_template__ = false;
+/* style inject */
+
+/* style inject SSR */
+
+/* style inject shadow dom */
+
+const __vue_component__ = normalizeComponent({
+  render: __vue_render__,
+  staticRenderFns: __vue_staticRenderFns__
+}, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, false, undefined, undefined, undefined);
+
+//
+var script$1 = {
+  components: {
+    VueTabsItem: __vue_component__
+  },
+  props: {
+    // デフォルトでアクティブにするタブ
+    defaultId: {
+      type: String,
+
+      default() {
+        return "";
+      }
+
+    },
+    // タブアイテムの配列
+    items: {
+      type: Array,
+
+      default() {
+        return [{
+          id: 'tab',
+          href: '',
+          isBlank: false,
+          value: 'タブ'
+        }];
+      }
+
+    },
+    // wrapper class
+    classWrapper: {
+      type: String,
+
+      default() {
+        return "c-tabmenu-wrapper";
+      }
+
+    },
+    // タブグループ class
+    classTabs: {
+      type: String,
+
+      default() {
+        return "c-tabmenu";
+      }
+
+    },
+    // リンク class
+    classLink: {
+      type: String,
+
+      default() {
+        return "c-tabmenu__link";
+      }
+
+    }
+  },
+
+  data() {
+    return {
+      nowId: this.defaultId
+    };
+  },
+
+  methods: {
+    click(targetId) {
+      this.nowId = targetId;
+    }
+
+  }
+};
+
+/* script */
+const __vue_script__$1 = script$1;
+/* template */
+
+var __vue_render__$1 = function () {
+  var _vm = this;
+
+  var _h = _vm.$createElement;
+
+  var _c = _vm._self._c || _h;
+
+  return _c('section', {
+    class: _vm.classWrapper
+  }, [_c('nav', {
+    class: _vm.classTabs
+  }, _vm._l(_vm.items, function (item, index) {
+    return _c('vue-tabs-item', {
+      key: index,
+      attrs: {
+        "now-id": _vm.nowId,
+        "id": item.id,
+        "href": item.href,
+        "is-blank": item.isBlank,
+        "class-link": _vm.classLink
+      },
+      domProps: {
+        "innerHTML": _vm._s(item.value)
+      },
+      on: {
+        "click": _vm.click
+      }
+    });
+  }), 1), _vm._v(" "), _vm._t("default", null, {
+    "nowId": _vm.nowId
+  })], 2);
+};
+
+var __vue_staticRenderFns__$1 = [];
+/* style */
+
+const __vue_inject_styles__$1 = undefined;
+/* scoped */
+
+const __vue_scope_id__$1 = undefined;
+/* module identifier */
+
+const __vue_module_identifier__$1 = undefined;
+/* functional template */
+
+const __vue_is_functional_template__$1 = false;
+/* style inject */
+
+/* style inject SSR */
+
+/* style inject shadow dom */
+
+const __vue_component__$1 = normalizeComponent({
+  render: __vue_render__$1,
+  staticRenderFns: __vue_staticRenderFns__$1
+}, __vue_inject_styles__$1, __vue_script__$1, __vue_scope_id__$1, __vue_is_functional_template__$1, __vue_module_identifier__$1, false, undefined, undefined, undefined);
 
 // Import vue component
 
-// install function executed by Vue.use()
-function install(Vue) {
-  if (install.installed) { return; }
+const install = function installVueTabs(Vue) {
+  if (install.installed) return;
   install.installed = true;
-  Vue.component('VueTabs', component);
-}
+  Vue.component('VueTabs', __vue_component__$1);
+}; // Create module definition for Vue.use()
 
-// Create module definition for Vue.use()
-var plugin = {
-  install: install,
-};
 
-// To auto-install when vue is found
-/* global window global */
-var GlobalVue = null;
+const plugin = {
+  install
+}; // To auto-install when vue is found
+// eslint-disable-next-line no-redeclare
+
+/* global window, global */
+
+let GlobalVue = null;
+
 if (typeof window !== 'undefined') {
   GlobalVue = window.Vue;
 } else if (typeof global !== 'undefined') {
   GlobalVue = global.Vue;
 }
+
 if (GlobalVue) {
   GlobalVue.use(plugin);
-}
-
-// Inject install function into component - allows component
+} // Inject install function into component - allows component
 // to be registered via Vue.use() as well as Vue.component()
-component.install = install;
 
-// It's possible to expose named exports when writing components that can
+
+__vue_component__$1.install = install; // Export component by default
 // also be used as directives, etc. - eg. import { RollupDemoDirective } from 'rollup-demo';
 // export const RollupDemoDirective = component;
 
-export default component;
+export default __vue_component__$1;

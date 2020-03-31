@@ -2,11 +2,11 @@
 import component from '@/vue-tabs.vue';
 
 // install function executed by Vue.use()
-function install(Vue) {
+const install = function installVueTabs(Vue) {
   if (install.installed) return;
   install.installed = true;
   Vue.component('VueTabs', component);
-}
+};
 
 // Create module definition for Vue.use()
 const plugin = {
@@ -14,7 +14,8 @@ const plugin = {
 };
 
 // To auto-install when vue is found
-/* global window global */
+// eslint-disable-next-line no-redeclare
+/* global window, global */
 let GlobalVue = null;
 if (typeof window !== 'undefined') {
   GlobalVue = window.Vue;
