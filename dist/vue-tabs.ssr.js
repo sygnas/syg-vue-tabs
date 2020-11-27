@@ -17,21 +17,21 @@ var script = {
     nowId: {
       type: String,
       default: function _default() {
-        return "";
+        return '';
       }
     },
     // タブ切り替え対象のターゲット識別子
     id: {
       type: String,
       default: function _default() {
-        return "";
+        return '';
       }
     },
     // url（外部リンクの場合）
     href: {
       type: String,
       default: function _default() {
-        return "";
+        return '';
       }
     },
     // 別窓開くか
@@ -45,7 +45,7 @@ var script = {
     classLink: {
       type: String,
       default: function _default() {
-        return "c-tabmenu__link";
+        return 'c-tabmenu__link';
       }
     }
   },
@@ -66,7 +66,7 @@ var script = {
      */
     clickLink: function clickLink(e) {
       if (this.href) return true;
-      this.$emit("click", this.id);
+      this.$emit('click', this.id);
       e.preventDefault();
     }
   }
@@ -177,7 +177,7 @@ var __vue_inject_styles__ = undefined;
 var __vue_scope_id__ = undefined;
 /* module identifier */
 
-var __vue_module_identifier__ = "data-v-419bafbb";
+var __vue_module_identifier__ = "data-v-68249001";
 /* functional template */
 
 var __vue_is_functional_template__ = false;
@@ -200,7 +200,14 @@ var script$1 = {
     defaultId: {
       type: String,
       default: function _default() {
-        return "";
+        return '';
+      }
+    },
+    // urlハッシュを使って初期表示を制御するか
+    useHash: {
+      type: Boolean,
+      default: function _default() {
+        return false;
       }
     },
     // タブアイテムの配列
@@ -219,32 +226,51 @@ var script$1 = {
     classWrapper: {
       type: String,
       default: function _default() {
-        return "c-tabmenu-wrapper";
+        return 'c-tabmenu-wrapper';
       }
     },
     // タブグループ class
     classTabs: {
       type: String,
       default: function _default() {
-        return "c-tabmenu";
+        return 'c-tabmenu';
       }
     },
     // リンク class
     classLink: {
       type: String,
       default: function _default() {
-        return "c-tabmenu__link";
+        return 'c-tabmenu__link';
       }
     }
   },
   data: function data() {
     return {
-      nowId: this.defaultId
+      nowId: ''
     };
+  },
+  mounted: function mounted() {
+    this.checkQuery();
   },
   methods: {
     click: function click(targetId) {
-      this.nowId = targetId;
+      this.setNowId(targetId);
+    },
+    // アクティブなタブを指定する
+    setNowId: function setNowId(str) {
+      this.nowId = str;
+
+      if (this.useHash) {
+        location.hash = this.nowId;
+      }
+    },
+    checkQuery: function checkQuery() {
+      // useHash = true の時だけ初期アクティブを変更する
+      if (this.useHash && location.hash) {
+        this.defaultId = location.hash.substr(1);
+      }
+
+      this.setNowId(this.defaultId);
     }
   }
 };/* script */
@@ -264,8 +290,8 @@ var __vue_render__$1 = function __vue_render__() {
     return _c('vue-tabs-item', {
       key: index,
       attrs: {
-        "now-id": _vm.nowId,
         "id": item.id,
+        "now-id": _vm.nowId,
         "href": item.href,
         "is-blank": item.isBlank,
         "class-link": _vm.classLink
@@ -291,7 +317,7 @@ var __vue_inject_styles__$1 = undefined;
 var __vue_scope_id__$1 = undefined;
 /* module identifier */
 
-var __vue_module_identifier__$1 = "data-v-210bd052";
+var __vue_module_identifier__$1 = "data-v-4927e252";
 /* functional template */
 
 var __vue_is_functional_template__$1 = false;

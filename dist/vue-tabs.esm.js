@@ -18,7 +18,7 @@ var script = {
       type: String,
 
       default() {
-        return "";
+        return '';
       }
 
     },
@@ -27,7 +27,7 @@ var script = {
       type: String,
 
       default() {
-        return "";
+        return '';
       }
 
     },
@@ -36,7 +36,7 @@ var script = {
       type: String,
 
       default() {
-        return "";
+        return '';
       }
 
     },
@@ -54,7 +54,7 @@ var script = {
       type: String,
 
       default() {
-        return "c-tabmenu__link";
+        return 'c-tabmenu__link';
       }
 
     }
@@ -77,7 +77,7 @@ var script = {
      */
     clickLink(e) {
       if (this.href) return true;
-      this.$emit("click", this.id);
+      this.$emit('click', this.id);
       e.preventDefault();
     }
 
@@ -219,7 +219,16 @@ var script$1 = {
       type: String,
 
       default() {
-        return "";
+        return '';
+      }
+
+    },
+    // urlハッシュを使って初期表示を制御するか
+    useHash: {
+      type: Boolean,
+
+      default() {
+        return false;
       }
 
     },
@@ -242,7 +251,7 @@ var script$1 = {
       type: String,
 
       default() {
-        return "c-tabmenu-wrapper";
+        return 'c-tabmenu-wrapper';
       }
 
     },
@@ -251,7 +260,7 @@ var script$1 = {
       type: String,
 
       default() {
-        return "c-tabmenu";
+        return 'c-tabmenu';
       }
 
     },
@@ -260,7 +269,7 @@ var script$1 = {
       type: String,
 
       default() {
-        return "c-tabmenu__link";
+        return 'c-tabmenu__link';
       }
 
     }
@@ -268,13 +277,35 @@ var script$1 = {
 
   data() {
     return {
-      nowId: this.defaultId
+      nowId: ''
     };
+  },
+
+  mounted() {
+    this.checkQuery();
   },
 
   methods: {
     click(targetId) {
-      this.nowId = targetId;
+      this.setNowId(targetId);
+    },
+
+    // アクティブなタブを指定する
+    setNowId(str) {
+      this.nowId = str;
+
+      if (this.useHash) {
+        location.hash = this.nowId;
+      }
+    },
+
+    checkQuery() {
+      // useHash = true の時だけ初期アクティブを変更する
+      if (this.useHash && location.hash) {
+        this.defaultId = location.hash.substr(1);
+      }
+
+      this.setNowId(this.defaultId);
     }
 
   }
@@ -299,8 +330,8 @@ var __vue_render__$1 = function () {
     return _c('vue-tabs-item', {
       key: index,
       attrs: {
-        "now-id": _vm.nowId,
         "id": item.id,
+        "now-id": _vm.nowId,
         "href": item.href,
         "is-blank": item.isBlank,
         "class-link": _vm.classLink

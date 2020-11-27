@@ -4,8 +4,8 @@
     :rel="isBlank ? 'noopener noreferrer' : ''"
     :href="href"
     :class="classLink"
-    @click="clickLink"
     :data-active="isActive ? 'true' : ''"
+    @click="clickLink"
   >
     <slot />
   </a>
@@ -18,21 +18,21 @@ export default {
     nowId: {
       type: String,
       default() {
-        return "";
+        return '';
       },
     },
     // タブ切り替え対象のターゲット識別子
     id: {
       type: String,
       default() {
-        return "";
-      }
+        return '';
+      },
     },
     // url（外部リンクの場合）
     href: {
       type: String,
       default() {
-        return "";
+        return '';
       },
     },
     // 別窓開くか
@@ -46,7 +46,7 @@ export default {
     classLink: {
       type: String,
       default() {
-        return "c-tabmenu__link";
+        return 'c-tabmenu__link';
       },
     },
   },
@@ -67,7 +67,7 @@ export default {
      */
     clickLink(e) {
       if (this.href) return true;
-      this.$emit("click", this.id);
+      this.$emit('click', this.id);
       e.preventDefault();
     },
   },

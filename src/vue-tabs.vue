@@ -1,15 +1,16 @@
 <template>
   <section :class="classWrapper">
     <nav :class="classTabs">
-      <vue-tabs-item v-for="(item, index) in items"
+      <vue-tabs-item
+        v-for="(item, index) in items"
+        :id="item.id"
         :key="index"
         :now-id="nowId"
-        :id="item.id"
         :href="item.href"
         :is-blank="item.isBlank"
         :class-link="classLink"
-        v-html="item.value"
         @click="click"
+        v-html="item.value"
       >
       </vue-tabs-item>
     </nav>
@@ -22,15 +23,22 @@
 import VueTabsItem from './vue-tabs-item.vue';
 
 export default {
-  components:{
+  components: {
     VueTabsItem,
   },
   props: {
-   // デフォルトでアクティブにするタブ
+    // デフォルトでアクティブにするタブ
     defaultId: {
       type: String,
       default() {
-        return "";
+        return '';
+      },
+    },
+    // urlハッシュを使って初期表示を制御するか
+    useHash: {
+      type: Boolean,
+      default() {
+        return false;
       },
     },
     // タブアイテムの配列
@@ -51,32 +59,50 @@ export default {
     classWrapper: {
       type: String,
       default() {
-        return "c-tabmenu-wrapper";
-      }
+        return 'c-tabmenu-wrapper';
+      },
     },
     // タブグループ class
     classTabs: {
       type: String,
       default() {
-        return "c-tabmenu";
+        return 'c-tabmenu';
       },
     },
-     // リンク class
+    // リンク class
     classLink: {
       type: String,
       default() {
-        return "c-tabmenu__link";
+        return 'c-tabmenu__link';
       },
     },
   },
   data() {
     return {
-      nowId: this.defaultId,
+      nowId: '',
     };
   },
+  mounted() {
+    this.checkQuery();
+  },
   methods: {
-    click(targetId){
-      this.nowId = targetId;
+    click(targetId) {
+      this.setNowId(targetId);
+    },
+    // アクティブなタブを指定する
+    setNowId(str) {
+      this.nowId = str;
+
+      if (this.useHash) {
+        location.hash = this.nowId;
+      }
+    },
+    checkQuery() {
+      // useHash = true の時だけ初期アクティブを変更する
+      if (this.useHash && location.hash) {
+        this.defaultId = location.hash.substr(1);
+      }
+      this.setNowId(this.defaultId);
     },
   },
 };
