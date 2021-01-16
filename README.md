@@ -5,14 +5,6 @@ Vueでカスタマイズ可能なタブナビゲーションを実装。
 ## Description
 Vue.jsでシンプルなタブナビゲーションを使いたい人向け。
 
-タブナビゲーションのスクリプトという名目ですが、data属性を与えるだけでコンテンツ制御を何もしません。
-その代わり CSS で好きなように見た目をカスタマイズできます。
-
-- data属性でターゲットとなるコンテンツ、前後ボタン、初期表示ページを設定
-- URLのハッシュでも初期表示ページを設定可能
-- 表示エフェクトに関しては全てcssにて行う。
-- 非表示状態についてもcssで定義する。
-
 
 ## Release
 
@@ -31,7 +23,7 @@ npm install --save @sygnas/vue-tabs
 ### html / JS
 
 ```html
-<section id="app-tabs">
+<section>
   <div id="app">
     <vue-tabs
       v-slot:default="slotProps"
