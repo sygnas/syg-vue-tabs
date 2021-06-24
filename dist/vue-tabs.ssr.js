@@ -11,6 +11,21 @@
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 var script = {
   props: {
     // 現在アクティブな識別子
@@ -41,11 +56,26 @@ var script = {
         return false;
       }
     },
+    // <li> のclass
+    // isListTag が true の時に使用
+    classItem: {
+      type: String,
+      default: function _default() {
+        return 'c-tabmenu__item';
+      }
+    },
     // リンク class
     classLink: {
       type: String,
       default: function _default() {
         return 'c-tabmenu__link';
+      }
+    },
+    // <ul><li> タグを使ったタブにするか
+    isListTag: {
+      type: Boolean,
+      default: function _default() {
+        return false;
       }
     }
   },
@@ -154,7 +184,9 @@ var __vue_render__ = function __vue_render__() {
 
   var _c = _vm._self._c || _h;
 
-  return _c('a', {
+  return _vm.isListTag ? _c('li', {
+    class: _vm.classItem
+  }, [_vm._ssrNode("<a" + _vm._ssrAttr("target", _vm.isBlank ? '_blank' : '') + _vm._ssrAttr("rel", _vm.isBlank ? 'noopener noreferrer' : '') + _vm._ssrAttr("href", _vm.href) + _vm._ssrAttr("data-active", _vm.isActive ? 'true' : '') + _vm._ssrClass(null, _vm.classLink) + ">", "</a>", [_vm._t("default")], 2)]) : _c('a', {
     class: _vm.classLink,
     attrs: {
       "target": _vm.isBlank ? '_blank' : '',
@@ -177,7 +209,7 @@ var __vue_inject_styles__ = undefined;
 var __vue_scope_id__ = undefined;
 /* module identifier */
 
-var __vue_module_identifier__ = "data-v-68249001";
+var __vue_module_identifier__ = "data-v-7b4d07bb";
 /* functional template */
 
 var __vue_is_functional_template__ = false;
@@ -210,6 +242,13 @@ var script$1 = {
         return false;
       }
     },
+    // <ul> タグを使ったタブにするか
+    isListTag: {
+      type: Boolean,
+      default: function _default() {
+        return false;
+      }
+    },
     // タブアイテムの配列
     items: {
       type: Array,
@@ -236,6 +275,14 @@ var script$1 = {
         return 'c-tabmenu';
       }
     },
+    // <li> class
+    // isListTag が true の時に使用
+    classItem: {
+      type: String,
+      default: function _default() {
+        return 'c-tabmenu__item';
+      }
+    },
     // リンク class
     classLink: {
       type: String,
@@ -253,19 +300,30 @@ var script$1 = {
     this.checkQuery();
   },
   methods: {
+    /**
+     * タブアイテムがクリックされたら、それが持つ ID を受け取る
+     */
     click: function click(targetId) {
       this.setNowId(targetId);
     },
-    // アクティブなタブを指定する
+
+    /**
+     * アクティブにしたいタブのIDを指定して this.nowID を変更
+     */
     setNowId: function setNowId(str) {
-      this.nowId = str;
+      this.nowId = str; // アクティブタブIDを送信
+
+      this.$emit('change', this.nowId);
 
       if (this.useHash) {
         location.hash = this.nowId;
       }
     },
+
+    /**
+     * mouted 時に localtion.hash をチェックして、初期状態を変更する
+     */
     checkQuery: function checkQuery() {
-      // useHash = true の時だけ初期アクティブを変更する
       if (this.useHash && location.hash) {
         this.defaultId = location.hash.substr(1);
       }
@@ -284,9 +342,12 @@ var __vue_render__$1 = function __vue_render__() {
 
   var _c = _vm._self._c || _h;
 
-  return _c('section', {
+  return _c('nav', {
     class: _vm.classWrapper
-  }, [_vm._ssrNode("<nav" + _vm._ssrClass(null, _vm.classTabs) + ">", "</nav>", _vm._l(_vm.items, function (item, index) {
+  }, [_c(_vm.isListTag ? 'ul' : 'div', {
+    tag: "component",
+    class: _vm.classTabs
+  }, _vm._l(_vm.items, function (item, index) {
     return _c('vue-tabs-item', {
       key: index,
       attrs: {
@@ -294,15 +355,18 @@ var __vue_render__$1 = function __vue_render__() {
         "now-id": _vm.nowId,
         "href": item.href,
         "is-blank": item.isBlank,
-        "class-link": _vm.classLink
-      },
-      domProps: {
-        "innerHTML": _vm._s(item.value)
+        "class-item": _vm.clasItem,
+        "class-link": _vm.classLink,
+        "is-list-tag": _vm.isListTag
       },
       on: {
         "click": _vm.click
       }
-    });
+    }, [_c('span', {
+      domProps: {
+        "innerHTML": _vm._s(item.value)
+      }
+    })]);
   }), 1), _vm._ssrNode(" "), _vm._t("default", null, {
     "nowId": _vm.nowId
   })], 2);
@@ -317,7 +381,7 @@ var __vue_inject_styles__$1 = undefined;
 var __vue_scope_id__$1 = undefined;
 /* module identifier */
 
-var __vue_module_identifier__$1 = "data-v-4927e252";
+var __vue_module_identifier__$1 = "data-v-36b3e974";
 /* functional template */
 
 var __vue_is_functional_template__$1 = false;

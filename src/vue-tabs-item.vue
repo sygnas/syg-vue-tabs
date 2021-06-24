@@ -1,5 +1,20 @@
 <template>
+  <!-- リストタグを使用するパターン -->
+  <li v-if="isListTag" :class="classItem">
+    <a
+      :target="isBlank ? '_blank' : ''"
+      :rel="isBlank ? 'noopener noreferrer' : ''"
+      :href="href"
+      :class="classLink"
+      :data-active="isActive ? 'true' : ''"
+      @click="clickLink"
+    >
+      <slot />
+    </a>
+  </li>
+  <!-- リストタグを使用しないパターン -->
   <a
+    v-else
     :target="isBlank ? '_blank' : ''"
     :rel="isBlank ? 'noopener noreferrer' : ''"
     :href="href"
@@ -42,6 +57,14 @@ export default {
         return false;
       },
     },
+    // <li> のclass
+    // isListTag が true の時に使用
+    classItem: {
+      type: String,
+      default() {
+        return 'c-tabmenu__item';
+      },
+    },
     // リンク class
     classLink: {
       type: String,
@@ -49,7 +72,14 @@ export default {
         return 'c-tabmenu__link';
       },
     },
-  },
+     // <ul><li> タグを使ったタブにするか
+    isListTag: {
+      type: Boolean,
+      default() {
+        return false;
+      },
+    },
+ },
   computed: {
     isActive() {
       // 外部リンクはアクティブ状態にならない

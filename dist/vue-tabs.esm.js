@@ -11,6 +11,21 @@
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 var script = {
   props: {
     // 現在アクティブな識別子
@@ -49,12 +64,31 @@ var script = {
       }
 
     },
+    // <li> のclass
+    // isListTag が true の時に使用
+    classItem: {
+      type: String,
+
+      default() {
+        return 'c-tabmenu__item';
+      }
+
+    },
     // リンク class
     classLink: {
       type: String,
 
       default() {
         return 'c-tabmenu__link';
+      }
+
+    },
+    // <ul><li> タグを使ったタブにするか
+    isListTag: {
+      type: Boolean,
+
+      default() {
+        return false;
       }
 
     }
@@ -170,7 +204,20 @@ var __vue_render__ = function () {
 
   var _c = _vm._self._c || _h;
 
-  return _c('a', {
+  return _vm.isListTag ? _c('li', {
+    class: _vm.classItem
+  }, [_c('a', {
+    class: _vm.classLink,
+    attrs: {
+      "target": _vm.isBlank ? '_blank' : '',
+      "rel": _vm.isBlank ? 'noopener noreferrer' : '',
+      "href": _vm.href,
+      "data-active": _vm.isActive ? 'true' : ''
+    },
+    on: {
+      "click": _vm.clickLink
+    }
+  }, [_vm._t("default")], 2)]) : _c('a', {
     class: _vm.classLink,
     attrs: {
       "target": _vm.isBlank ? '_blank' : '',
@@ -232,6 +279,15 @@ var script$1 = {
       }
 
     },
+    // <ul> タグを使ったタブにするか
+    isListTag: {
+      type: Boolean,
+
+      default() {
+        return false;
+      }
+
+    },
     // タブアイテムの配列
     items: {
       type: Array,
@@ -264,6 +320,16 @@ var script$1 = {
       }
 
     },
+    // <li> class
+    // isListTag が true の時に使用
+    classItem: {
+      type: String,
+
+      default() {
+        return 'c-tabmenu__item';
+      }
+
+    },
     // リンク class
     classLink: {
       type: String,
@@ -286,21 +352,30 @@ var script$1 = {
   },
 
   methods: {
+    /**
+     * タブアイテムがクリックされたら、それが持つ ID を受け取る
+     */
     click(targetId) {
       this.setNowId(targetId);
     },
 
-    // アクティブなタブを指定する
+    /**
+     * アクティブにしたいタブのIDを指定して this.nowID を変更
+     */
     setNowId(str) {
-      this.nowId = str;
+      this.nowId = str; // アクティブタブIDを送信
+
+      this.$emit('change', this.nowId);
 
       if (this.useHash) {
         location.hash = this.nowId;
       }
     },
 
+    /**
+     * mouted 時に localtion.hash をチェックして、初期状態を変更する
+     */
     checkQuery() {
-      // useHash = true の時だけ初期アクティブを変更する
       if (this.useHash && location.hash) {
         this.defaultId = location.hash.substr(1);
       }
@@ -322,9 +397,10 @@ var __vue_render__$1 = function () {
 
   var _c = _vm._self._c || _h;
 
-  return _c('section', {
+  return _c('nav', {
     class: _vm.classWrapper
-  }, [_c('nav', {
+  }, [_c(_vm.isListTag ? 'ul' : 'div', {
+    tag: "component",
     class: _vm.classTabs
   }, _vm._l(_vm.items, function (item, index) {
     return _c('vue-tabs-item', {
@@ -334,15 +410,18 @@ var __vue_render__$1 = function () {
         "now-id": _vm.nowId,
         "href": item.href,
         "is-blank": item.isBlank,
-        "class-link": _vm.classLink
-      },
-      domProps: {
-        "innerHTML": _vm._s(item.value)
+        "class-item": _vm.clasItem,
+        "class-link": _vm.classLink,
+        "is-list-tag": _vm.isListTag
       },
       on: {
         "click": _vm.click
       }
-    });
+    }, [_c('span', {
+      domProps: {
+        "innerHTML": _vm._s(item.value)
+      }
+    })]);
   }), 1), _vm._v(" "), _vm._t("default", null, {
     "nowId": _vm.nowId
   })], 2);
