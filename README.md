@@ -24,45 +24,6 @@ npm install --save @sygnas/vue-tabs
 
 ### シンプルな使い方
 
-```html
-<section>
-  <div id="app">
-    <vue-tabs
-      v-slot:default="slotProps"
-      default-id="tab2"
-      :items="[
-        {id: 'tab1', value:'タブ1'},
-        {id: 'tab2', value:'タブ2'},
-        {href:'http://google.com/', value:'Google'},
-        {href:'http://google.com/', value:'Google別窓', isBlank:true},
-      ]"
-    >
-      <div v-if="slotProps.nowId === 'tab1'">
-        タブ1の内容
-      </div>
-      <div v-else-if="slotProps.nowId === 'tab2'">
-        タブ2の内容
-      </div>
-    </vue-tabs>
-  </div>
-</section>
-```
-
-```javascript
-import Vue from 'vue';
-import VueTabs from '@sygnas/vue-tabs';
-
-  new Vue({
-    el: '#app',
-    components: {
-      VueTabs
-    },
-  });
-```
-
-
-### シンプルな使い方
-
 切り替えたいコンテンツを `<vue-tabs>` の slot に含める。
 
 ```html
