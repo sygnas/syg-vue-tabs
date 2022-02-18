@@ -1,90 +1,87 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, onMounted, ref } from 'vue';
+import { defineProps, withDefaults, onMounted, computed } from 'vue';
 import VueTabsItem from './vue-tabs-item.vue';
+import { getActiveId, setActiveId } from './activeId';
 
 type TTabItem = {
-  id: string,
-  href: string,
-  isBlank: boolean,
-  value: string,
-}
+  id: string;
+  href: string;
+  isBlank: boolean;
+  value: string;
+};
 
 type TProps = {
-  defaultId: string;    // デフォルトでアクティブにするタブ
-  useHash?: boolean;     // urlハッシュを使って初期表示を制御するか
-  isListTag?: boolean;   // <ul> タグを使ったタブにするか
-  items: TTabItem[];    // タブアイテムの配列
-  classWrapper?: string; // wrapper class
-  classTabs?: string;    // タブグループ class
-  classItem?: string;    // <li> class
-                        // isListTag が true の時に使用
-  classLink?: string;    // リンク class
+  group: string; // タブグループのID
+  default: string; // デフォルトでアクティブにするタブ
+  useHash?: boolean; // urlハッシュを使って初期表示を制御するか
+  isListTag?: boolean; // <ul> タグを使ったタブにするか
+  items: TTabItem[]; // タブアイテムの配列
+  classTabs?: string; // タブグループ class
+  classItem?: string; // <li> class。isListTag が true の時に使用
+  classLink?: string; // リンク class
   handlChange?: (id: string) => void; // タブが変更された時に実行される
 };
 
 const props = withDefaults(defineProps<TProps>(), {
-  defaultId: '',
+  default: '',
   useHash: false,
   isListTag: false,
-  classWrapper: 'c-tabmenu-wrapper',
   classTabs: 'c-tabmenu',
   classItem: 'c-tabmenu__item',
   classLink: 'c-tabmenu__link',
 });
 
-const nowId = ref('');
+const activeId = computed(() => getActiveId(props.group));
 
 /**
-  * アクティブにしたいタブのIDを指定して this.nowID を変更
-  */
-const _setNowId = (str: string) => {
-  nowId.value = str;
+ * アクティブにしたいタブのIDを指定して this.activeID を変更
+ */
+const $_setActiveId = (id: string) => {
+  setActiveId(props.group, id);
 
   // アクティブタブIDを送信
   if (props.handlChange) {
-    props.handlChange(nowId.value)
+    props.handlChange(activeId.value);
   }
-
+  // urlにハッシュを付ける
   if (props.useHash) {
-    location.hash = nowId.value;
+    location.hash = activeId.value;
   }
 };
 
 /**
-  * タブアイテムがクリックされたら、それが持つ ID を受け取る
-  */
-const itemClicked = (targetId: string) => {
-  _setNowId(targetId);
+ * タブアイテムがクリックされたら、それが持つ ID を受け取る
+ */
+const itemClicked = (id: string) => {
+  if (id === activeId.value) return;
+  $_setActiveId(id);
 };
 
 onMounted(() => {
   // mouted 時に localtion.hash をチェックして、初期状態を変更する
   if (props.useHash && location.hash) {
-  _setNowId(location.hash.substr(1));
+    $_setActiveId(location.hash.substr(1));
+  } else {
+    $_setActiveId(props.default);
   }
 });
-
 </script>
 
 <template>
-  <nav :class="props.classWrapper">
-    <component :is="props.isListTag ? 'ul' : 'div'" :class="props.classTabs">
-      <VueTabsItem
-        v-for="(item, index) in props.items"
-        :id="item.id"
-        :key="index"
-        :now-id="nowId"
-        :href="item.href"
-        :is-blank="item.isBlank"
-        :class-item="props.classItem"
-        :class-link="props.classLink"
-        :is-list-tag="props.isListTag"
-        :handl-click="itemClicked"
-      >
-        <span v-html="item.value" />
-      </VueTabsItem>
-    </component>
-
-    <slot :nowId="nowId"></slot>
-  </nav>
+  <component :is="props.isListTag ? 'ul' : 'div'" :class="props.classTabs">
+    <VueTabsItem
+      v-for="(item, index) in props.items"
+      :id="item.id"
+      :key="index"
+      :active-id="activeId"
+      :href="item.href"
+      :is-blank="item.isBlank"
+      :class-item="props.classItem"
+      :class-link="props.classLink"
+      :is-list-tag="props.isListTag"
+      :handl-click="itemClicked"
+    >
+      <span v-html="item.value" />
+    </VueTabsItem>
+  </component>
 </template>
