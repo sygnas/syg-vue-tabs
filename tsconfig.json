@@ -9,11 +9,11 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
-    "baseUrl": ".",
+    "baseUrl": "./",
     "paths": {
-      "~/*": ["src/*"]
+      "~/*": ["./src/*"]
     },
-    "outDir": "dist",
+    "outDir": "./dist",
     "useDefineForClassFields": true,
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
