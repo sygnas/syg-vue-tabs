@@ -1,5 +1,5 @@
 import VueTabs from './vue-tabs.vue';
 import VueTabsContent from './vue-tabs-content.vue';
-import { getActiveId, setActiveId } from './activeId';
+import { useTabControl } from './useTabControl';
 
-export { VueTabs, VueTabsContent, getActiveId, setActiveId };
+export { VueTabs, VueTabsContent, useTabControl };
