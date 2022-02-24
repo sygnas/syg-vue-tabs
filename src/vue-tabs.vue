@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, onMounted, computed } from 'vue';
+import { defineProps, withDefaults, onMounted } from 'vue';
 import VueTabsItem from './vue-tabs-item.vue';
-import { getActiveId, setActiveId } from './activeId';
+import { useTabControl } from './useTabControl';
 
 type TTabItem = {
   id: string;
@@ -19,7 +19,6 @@ type TProps = {
   classTabs?: string; // タブグループ class
   classItem?: string; // <li> class。isListTag が true の時に使用
   classLink?: string; // リンク class
-  handlChange?: (id: string) => void; // タブが変更された時に実行される
 };
 
 const props = withDefaults(defineProps<TProps>(), {
@@ -31,33 +30,28 @@ const props = withDefaults(defineProps<TProps>(), {
   classLink: 'c-tabmenu__link',
 });
 
-const activeId = computed(() => getActiveId(props.group));
+const tabControl = useTabControl(props.group, props.useHash);
 
 /**
  * アクティブにしたいタブのIDを指定して this.activeID を変更
  */
 const $_setActiveId = (id: string) => {
-  setActiveId(props.group, id);
-
-  // アクティブタブIDを送信
-  if (props.handlChange) {
-    props.handlChange(activeId.value);
-  }
-  // urlにハッシュを付ける
-  if (props.useHash) {
-    location.hash = activeId.value;
-  }
+  tabControl.setActiveId(id);
 };
 
 /**
  * タブアイテムがクリックされたら、それが持つ ID を受け取る
  */
 const itemClicked = (id: string) => {
-  if (id === activeId.value) return;
+  if (id === tabControl.activeId.value) return;
   $_setActiveId(id);
 };
 
 onMounted(() => {
+  // タブIDリストを登録
+  const idList = props.items.filter((item) => item.id).map((item) => item.id);
+  tabControl.setTabIdList(idList);
+
   // mouted 時に localtion.hash をチェックして、初期状態を変更する
   if (props.useHash && location.hash) {
     $_setActiveId(location.hash.substr(1));
@@ -73,7 +67,7 @@ onMounted(() => {
       v-for="(item, index) in props.items"
       :id="item.id"
       :key="index"
-      :active-id="activeId"
+      :active-id="tabControl.activeId.value"
       :href="item.href"
       :is-blank="item.isBlank"
       :class-item="props.classItem"

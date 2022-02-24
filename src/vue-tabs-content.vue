@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, computed } from 'vue';
-import { getActiveId } from './activeId';
+import { defineProps, withDefaults } from 'vue';
+import { useTabControl } from './useTabControl';
 
 type TProps = {
   group: string;
@@ -12,11 +12,11 @@ const props = withDefaults(defineProps<TProps>(), {
   tag: 'div',
 });
 
-const activeId = computed(() => getActiveId(props.group));
+const tabControl = useTabControl(props.group);
 </script>
 
 <template>
-  <component :is="props.tag" v-if="props.tabId === activeId">
+  <component :is="props.tag" v-if="props.tabId === tabControl.activeId.value">
     <slot></slot>
   </component>
 </template>
