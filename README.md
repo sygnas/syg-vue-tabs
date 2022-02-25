@@ -13,6 +13,7 @@ Vue.js でシンプルなタブナビゲーションを使いたい人向け。
   - `getActiveId()`、`setActiveId()` を廃止
   - `useTabControl()` を新設。変更通知、`getActiveId()` などは `useTabControl()` 経由で取得する
   - 前後のタブに移動する `prevTab()`、`nextTab()` を新設
+  - 変更イベント受け取りに `addChangeListener()`、タブクリック受け取りに `addClickListener()` を新設
 - 2022.02.17
   - Vue3 対応
   - ほぼ作り直し
@@ -100,7 +101,7 @@ app.mount('#app-tabs1');
 `tab-id`属性に `vue-tabs` の `items`属性に対応する文字列を記入。
 
 `<vue-tabs-content>` は `<div>` に置き換えられる。
-変更するには次に説明する `tag` 属性で指定する。
+別のタグに変更するには `tag` 属性で指定する。
 
 ## 変更を検知、&lt;transition&gt;を使う、外部からタブを変更など
 
@@ -147,9 +148,6 @@ const app2 = createApp({
     },
   },
   methods: {
-    onChange(id) {
-      console.log('タブが変更された', id);
-    },
     changeTab() {
       // タブIDを指定して変更
       tabControl.setActiveId('tabB');
@@ -165,7 +163,9 @@ const app2 = createApp({
   },
   mounted() {
     // タブの変更通知を受け取る関数を渡す
-    tabControl.onChange = this.onChange;
+    tabControl.addChangeListener((ev) => {
+      console.log('tab changed', ev.detail);
+    });
   },
 });
 
@@ -189,22 +189,24 @@ app2.mount('#app-tabs2');
 const tabControl = useTabControl('tabGroup2');
 ```
 
-タブを外部から操作するためのコントローラーを作成している。
+タブを外部から操作するためのコントローラーを作成。
 
 ```js
-  methods: {
-    onChange(id) {
-      console.log('タブが変更された', id);
-    },
-    // 〜略〜
-  },
-  mounted() {
-    // タブの変更通知を受け取る関数を渡す
-    tabControl.onChange = this.onChange;
-  },
+// タブの変更通知を受け取る関数を渡す
+tabControl.addChangeListener((ev) => {
+  console.log('tab changed', ev.detail);
+});
 ```
 
-`tabControl.onChange` に関数を指定すると、タブ変更時にその関数が呼ばれる。
+タブの変更イベントを受け取るためにリスナー関数を登録する。
+内部は `EventTarget` と `CustomEvent` で実装している。
+TypeScript で型エラーが出るなら下記のように `(〜) as EventListener` で囲む。
+
+```js
+tabControl.addChangeListener(((ev: CustomEvent) => {
+  console.log('tab changed', ev.detail);
+}) as EventListener);
+```
 
 ## Attributes
 
@@ -225,12 +227,12 @@ const tabControl = useTabControl('tabGroup2');
 
 `<vue-tabs :items="[{...}]">` の内容。
 
-| 属性    | 説明                            |
-| ------- | ------------------------------- |
-| id      | タブ ID                         |
-| href    | 外部リンクの時に使う            |
-| isBlank | 別窓を開くなら `true`           |
-| value   | タブに掲載する内容。例：`タブ1` |
+| 属性    | 初期値 | 説明                            |
+| ------- | --- | ------------------------------- |
+| id      |  | タブ ID                         |
+| href    |  | 外部リンクの時に使う            |
+| isBlank | false | 別窓を開くなら `true`           |
+| value   |  | タブに掲載する内容。例：`タブ1` |
 
 ### &lt;vue-tabs-content&gt;
 
@@ -252,7 +254,9 @@ import { VueTabs, useTabControl } from '@sygnas/vue-tabs';
 // コントローラー生成
 const tabControl = useTabControl('タブグループID');
 // 変更受け取り
-tabControl.onChange = (id) => { console.log('変更', id); };
+tabControl.addChangeListener((ev) => {
+  console.log('変更', ev.detail);
+});
 // 任意のタブをアクティブ
 tabControl.setActiveId('タブID');
 // 前後のタブをアクティブ

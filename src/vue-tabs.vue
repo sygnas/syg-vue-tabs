@@ -30,21 +30,14 @@ const props = withDefaults(defineProps<TProps>(), {
   classLink: 'c-tabmenu__link',
 });
 
-const tabControl = useTabControl(props.group, props.useHash);
-
-/**
- * アクティブにしたいタブのIDを指定して this.activeID を変更
- */
-const $_setActiveId = (id: string) => {
-  tabControl.setActiveId(id);
-};
+const tabControl = useTabControl(props.group, true, props.useHash);
 
 /**
  * タブアイテムがクリックされたら、それが持つ ID を受け取る
  */
 const itemClicked = (id: string) => {
   if (id === tabControl.activeId.value) return;
-  $_setActiveId(id);
+  tabControl.setActiveId(id, true);
 };
 
 onMounted(() => {
@@ -54,9 +47,9 @@ onMounted(() => {
 
   // mouted 時に localtion.hash をチェックして、初期状態を変更する
   if (props.useHash && location.hash) {
-    $_setActiveId(location.hash.substr(1));
+    tabControl.setActiveId(location.hash.substr(1));
   } else {
-    $_setActiveId(props.default);
+    tabControl.setActiveId(props.default);
   }
 });
 </script>

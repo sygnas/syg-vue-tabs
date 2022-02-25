@@ -2,13 +2,10 @@
  * タブグループが管理しているアクティブIDを一括管理する
  */
 import { ref, computed, watch } from 'vue';
+import { TTabEventType, TTabGroup } from './types';
 
-type TTabGroup = {
-  groupId: string;
-  activeId: string;
-  tabIdList: string[];
-};
-
+const EV_CHANGE: TTabEventType = 'change';
+const EV_CLICK: TTabEventType = 'click';
 const tabGroups = ref<TTabGroup[]>([]);
 
 /**
@@ -24,22 +21,23 @@ const $_getGroup = (groupId: string): TTabGroup => {
     groupId,
     activeId: '',
     tabIdList: [],
+    events: new EventTarget(),
   };
   tabGroups.value.push(newGroup);
+
   return tabGroups.value.find((group: TTabGroup) => group.groupId === groupId) as TTabGroup;
 };
 
 /**
  * タブグループ毎のコントローラーを生成
  * @param groupId タブグループ名
- * @param useHash アクティブIDを location.hash に反映するか
+ * @param isMaster vue-tabs.vue 以外は指定しない。マスターデータか。
+ * @param useHash vue-tabs.vue 以外は指定しない。location.hash を変更するか
  * @returns
  */
-export function useTabControl(groupId: string, useHash: boolean = false) {
+export function useTabControl(groupId: string, isMaster = false, useHash = false) {
   return (() => {
     const $_group: TTabGroup = $_getGroup(groupId);
-    // eslint-disable-next-line
-    let $_onChange = (id: string) => {};
 
     // アクティブなタブIDを取得
     const activeId = computed(() => {
@@ -47,8 +45,14 @@ export function useTabControl(groupId: string, useHash: boolean = false) {
     });
 
     // アクティブなタブIDを登録
-    const setActiveId = (activeId: string): void => {
+    const setActiveId = (activeId: string, isTabClick = false): void => {
       $_group.activeId = activeId;
+
+      // タブボタンをクリックされて呼び出されたなら通知する
+      if (isTabClick) {
+        const event = new CustomEvent(EV_CLICK, { detail: activeId });
+        $_group.events.dispatchEvent(event);
+      }
     };
 
     // 現在アクティブなタブIDのindexを取得
@@ -74,13 +78,26 @@ export function useTabControl(groupId: string, useHash: boolean = false) {
       setActiveId($_group.tabIdList[prevIndex]);
     };
 
+    // 変更のリスナーを登録
+    const addChangeListener = (func: EventListenerOrEventListenerObject) => {
+      $_group.events.addEventListener(EV_CHANGE, func);
+    };
+
+    // クリックのリスナーを登録
+    const addClickListener = (func: EventListenerOrEventListenerObject) => {
+      $_group.events.addEventListener(EV_CLICK, func);
+    };
+
     // アクティブIDの監視
     watch(activeId, () => {
       // 変更を通知
-      $_onChange(activeId.value);
+      if (isMaster) {
+        const event = new CustomEvent(EV_CHANGE, { detail: activeId.value });
+        $_group.events.dispatchEvent(event);
+      }
 
       // urlにハッシュを付ける
-      if (useHash) {
+      if (useHash && isMaster) {
         location.hash = activeId.value;
       }
     });
@@ -92,10 +109,8 @@ export function useTabControl(groupId: string, useHash: boolean = false) {
       setTabIdList,
       changeNextTab,
       changePrevTab,
-      // タブの変更を受け取る関数を登録
-      set onChange(func: (id: string) => void) {
-        $_onChange = func;
-      },
+      addChangeListener,
+      addClickListener,
     };
   })();
 }
