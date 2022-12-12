@@ -8,6 +8,8 @@ Vue.js でシンプルなタブナビゲーションを使いたい人向け。
 
 ## Release
 
+- 2022.12.12
+  - VueTabs の item属性 `isBlank`、`href` を無指定でもOKにした
 - 2022.02.25
   - `<VueTabs>` の `handlChange`属性を廃止
   - `getActiveId()`、`setActiveId()` を廃止

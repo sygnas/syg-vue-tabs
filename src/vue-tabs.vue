@@ -5,8 +5,8 @@ import { useTabControl } from './useTabControl';
 
 type TTabItem = {
   id: string;
-  href: string;
-  isBlank: boolean;
+  href?: string;
+  isBlank?: boolean;
   value: string;
 };
 
@@ -61,8 +61,8 @@ onMounted(() => {
       :id="item.id"
       :key="index"
       :active-id="tabControl.activeId.value"
-      :href="item.href"
-      :is-blank="item.isBlank"
+      :href="item.href || ''"
+      :is-blank="item.isBlank || false"
       :class-item="props.classItem"
       :class-link="props.classLink"
       :is-list-tag="props.isListTag"
