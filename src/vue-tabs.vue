@@ -5,17 +5,17 @@ import { useTabControl } from './useTabControl';
 
 type TTabItem = {
   id: string;
+  value: string;
   href?: string;
   isBlank?: boolean;
-  value: string;
 };
 
 type TProps = {
   group: string; // タブグループのID
   default: string; // デフォルトでアクティブにするタブ
+  items: TTabItem[]; // タブアイテムの配列
   useHash?: boolean; // urlハッシュを使って初期表示を制御するか
   isListTag?: boolean; // <ul> タグを使ったタブにするか
-  items: TTabItem[]; // タブアイテムの配列
   classTabs?: string; // タブグループ class
   classItem?: string; // <li> class。isListTag が true の時に使用
   classLink?: string; // リンク class
