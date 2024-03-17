@@ -21,6 +21,7 @@ const $_getGroup = (groupId: string): TTabGroup => {
     groupId,
     activeId: '',
     tabIdList: [],
+    intervalId: 0,
     events: new EventTarget(),
   };
   tabGroups.value.push(newGroup);
@@ -109,6 +110,20 @@ export function useTabControl(groupId: string, isMaster = false, useHash = false
       $_group.events.addEventListener(EV_CLICK, func);
     };
 
+    /**
+     * 指定ミリ秒間隔で自動的に次のタブに切り替える
+     * @param time ミリ秒
+     */
+    const startAutoChange = (time: number): void => {
+      $_group.intervalId = setInterval(() => {
+        changeNextTab();
+      }, time);
+    };
+
+    const stopAutoChange = (): void => {
+      clearInterval($_group.intervalId);
+    };
+
     // アクティブIDの監視
     watch(activeId, () => {
       // 変更を通知
@@ -130,6 +145,8 @@ export function useTabControl(groupId: string, isMaster = false, useHash = false
       setTabIdList,
       changeNextTab,
       changePrevTab,
+      startAutoChange,
+      stopAutoChange,
       addChangeListener,
       addClickListener,
     };

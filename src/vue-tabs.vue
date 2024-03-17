@@ -16,6 +16,8 @@ type TProps = {
   items: TTabItem[]; // タブアイテムの配列
   useHash?: boolean; // urlハッシュを使って初期表示を制御するか
   isListTag?: boolean; // <ul> タグを使ったタブにするか
+  auto?: number; // ミリ秒を指定すると自動で次のタブを開く
+  isStopAuto?: boolean; // クリックすると auto が終了する
   classTabs?: string; // タブグループ class
   classItem?: string; // <li> class。isListTag が true の時に使用
   classLink?: string; // リンク class
@@ -38,6 +40,11 @@ const tabControl = useTabControl(props.group, true, props.useHash);
 const itemClicked = (id: string) => {
   if (id === tabControl.activeId.value) return;
   tabControl.setActiveId(id, true);
+
+  // 自動切り替えを無効化する
+  if (props.isStopAuto) {
+    tabControl.stopAutoChange();
+  }
 };
 
 onMounted(() => {
@@ -53,6 +60,11 @@ onMounted(() => {
     tabControl.setActiveId(location.hash.substr(1));
   } else {
     tabControl.setActiveId(props.default);
+  }
+
+  // 自動切り替え
+  if (props.auto && props.auto >= 1) {
+    tabControl.startAutoChange(props.auto);
   }
 });
 </script>

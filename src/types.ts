@@ -6,6 +6,7 @@ type TTabGroup = {
   groupId: string;
   activeId: string;
   tabIdList: string[];
+  intervalId: number;
   events: EventTarget;
 };
 
