@@ -1,3 +1,9 @@
+<style>
+.cl-red{
+  color: #cc0000;
+}
+</style>
+
 # syg-vue-tabs
 
 Vue でカスタマイズ可能なタブナビゲーションを実装。
@@ -57,9 +63,13 @@ npm install --save @sygnas/vue-tabs@^1.2.0
   >
   </vue-tabs>
 
-  <vue-tabs-content group="tabGroup1" tab-id="tab1"> タブ1の内容 </vue-tabs-content>
+  <vue-tabs-content group="tabGroup1" tab-id="tab1">
+    タブ1の内容
+  </vue-tabs-content>
 
-  <vue-tabs-content group="tabGroup1" tab-id="tab2"> タブ2の内容 </vue-tabs-content>
+  <vue-tabs-content group="tabGroup1" tab-id="tab2">
+    タブ2の内容
+  </vue-tabs-content>
 </section>
 ```
 
@@ -96,7 +106,9 @@ app.mount('#app-tabs1');
 `items`属性でタブボタンを指定。`href` を指定したものはタブ切替ではなく単純なリンクになる。
 
 ```html
-<vue-tabs-content group="tabGroup1" tab-id="tab1"> タブ1の内容 </vue-tabs-content>
+<vue-tabs-content group="tabGroup1" tab-id="tab1">
+  タブ1の内容
+</vue-tabs-content>
 ```
 
 `group`属性に `vue-tabs` と同じ文字列を記入。
@@ -121,13 +133,12 @@ app.mount('#app-tabs1');
 
   <transition name="e-v-transition_fade" mode="out-in">
     <div v-if="activeId === 'tabA'">タブAの内容</div>
-
     <div v-else-if="activeId === 'tabB'">タブBの内容</div>
   </transition>
 
   <button @click="prevTab">前のタブ</button>
   <button @click="nextTab">次のタブ</button>
-  <button @click="changeTab">タブBに切替</button>
+  <button @click="changeToB">タブBに切替</button>
 </section>
 ```
 
@@ -141,7 +152,6 @@ const tabControl = useTabControl('tabGroup2');
 const app2 = createApp({
   components: {
     VueTabs,
-    VueTabsContent,
   },
   computed: {
     activeId() {
@@ -150,7 +160,7 @@ const app2 = createApp({
     },
   },
   methods: {
-    changeTab() {
+    changeToB() {
       // タブIDを指定して変更
       tabControl.setActiveId('tabB');
     },
@@ -179,7 +189,6 @@ app2.mount('#app-tabs2');
 ```html
   <transition name="e-v-transition_fade" mode="out-in">
     <div v-if="activeId === 'tabA'">タブAの内容</div>
-
     <div v-else-if="activeId === 'tabB'">タブBの内容</div>
   </transition>
 ```
@@ -213,35 +222,38 @@ tabControl.addChangeListener(((ev: CustomEvent) => {
 ## Attributes
 
 ### &lt;vue-tabs&gt;
+<span class="cl-red">*</span>は必須属性
 
 | 属性         | 初期値              | 説明                                                                             |
 | ------------ | ------------------- | -------------------------------------------------------------------------------- |
-| group        |                     | タブグループ ID                                                                  |
-| default      |                     | デフォルトでアクティブ（表示）するタブ ID                                        |
-| items        |                     | タブメニューアイテムの配列（後述）                                               |
+| group <span class="cl-red">*</span>        |                     | タブグループ ID                                                                  |
+| default <span class="cl-red">*</span>      |                     | デフォルトでアクティブ（表示）するタブ ID                                        |
+| items <span class="cl-red">*</span>        |                     | タブメニューアイテムの配列（後述）                                               |
 | use-hash     | false               | タブのアクティブ ID を location.hash に付ける                                    |
 | is-list-tag  | false               | true を指定すると &lt;ul&gt; タグを使用する。デフォルトは &lt;div&gt; が使われる |
 | class-tabs   | 'c-tabmenu'         | タブグループのクラス名                                                           |
 | class-item   | 'c-tabmenu\_\_item' | is-list-tag が true の時に使用。&lt;li&gt; のクラス名                            |
 | class-link   | 'c-tabmenu\_\_link' | タブのクラス名                                                                   |
 
-### Items
+### items属性
 
 `<vue-tabs :items="[{...}]">` の内容。
+<span class="cl-red">*</span>は必須属性
+
 
 | 属性    | 初期値 | 説明                            |
 | ------- | --- | ------------------------------- |
-| id      |  | タブ ID                         |
+| id <span class="cl-red">*</span>      |  | タブ ID                         |
+| value <span class="cl-red">*</span>   |  | タブに掲載する内容。例：`タブ1` |
 | href    |  | 外部リンクの時に使う            |
 | isBlank | false | 別窓を開くなら `true`           |
-| value   |  | タブに掲載する内容。例：`タブ1` |
 
 ### &lt;vue-tabs-content&gt;
 
 | 属性  | 初期値 | 説明                                    |
 | ----- | ------ | --------------------------------------- |
-| group |        | タブグループ ID                         |
-| tabId |        | タブ切替の識別 ID                       |
+| group <span class="cl-red">*</span> |        | タブグループ ID                         |
+| tabId <span class="cl-red">*</span> |        | タブ切替の識別 ID                       |
 | tag   | 'div'  | `<vue-tabs-content>` 展開時の HTML タグ |
 
 
@@ -249,6 +261,7 @@ tabControl.addChangeListener(((ev: CustomEvent) => {
 
 タブのコントローラーを生成する。
 タブを外部から操作したり、変更を受け取れる。
+複数のタブグループを使いたい時はそれぞれに対応したtabControlを作る必要がある。
 
 ```js
 import { VueTabs, useTabControl } from '@sygnas/vue-tabs';
