@@ -117,7 +117,7 @@ app.mount('#app-tabs1');
 `<vue-tabs-content>` は `<div>` に置き換えられる。
 別のタグに変更するには `tag` 属性で指定する。
 
-## 変更を検知、&lt;transition&gt;を使う、外部からタブを変更など
+## 変更を検知、&lt;transition&gt;を使う、外部からタブを変更、タイマー切り替え
 
 ```html
 <section id="app-tabs2">
@@ -128,6 +128,8 @@ app.mount('#app-tabs1');
                     {id: 'tabA', value:'タブA'},
                     {id: 'tabB', value:'タブB'},
                     ]"
+    auto="8000"
+    is-stop-auto="true"
   >
   </vue-tabs>
 
@@ -231,6 +233,8 @@ tabControl.addChangeListener(((ev: CustomEvent) => {
 | items <span class="cl-red">*</span>        |                     | タブメニューアイテムの配列（後述）                                               |
 | use-hash     | false               | タブのアクティブ ID を location.hash に付ける                                    |
 | is-list-tag  | false               | true を指定すると &lt;ul&gt; タグを使用する。デフォルトは &lt;div&gt; が使われる |
+| auto |  | ミリ秒を指定すると自動で次のタブに切り替わる |
+| is-stop-auto |  | タブをクリックした時に `auto` の自動切り替えを止める |
 | class-tabs   | 'c-tabmenu'         | タブグループのクラス名                                                           |
 | class-item   | 'c-tabmenu\_\_item' | is-list-tag が true の時に使用。&lt;li&gt; のクラス名                            |
 | class-link   | 'c-tabmenu\_\_link' | タブのクラス名                                                                   |
@@ -304,6 +308,15 @@ tabControl.changeNextTab();
 
 #### changePrevTab(): void
 前のタブをアクティブにする
+
+#### startAutoChange(time: number): void
+- time : 自動切り替え間隔をミリ秒で指定
+
+指定間隔で自動的に次のタブに切り替える
+
+
+#### stopAutoChange(): void
+自動切り替えを止める
 
 #### addChangeListener(func: EventListenerOrEventListenerObject): void
 - func : (ev) => void
