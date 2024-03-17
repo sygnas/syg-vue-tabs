@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineProps, withDefaults, onMounted } from 'vue';
+import { defineProps, withDefaults, onMounted, onUnmounted } from 'vue';
 import VueTabsItem from './vue-tabs-item.vue';
 import { useTabControl } from './useTabControl';
 
@@ -66,6 +66,11 @@ onMounted(() => {
   if (props.auto && props.auto >= 1) {
     tabControl.startAutoChange(props.auto);
   }
+});
+
+onUnmounted(() => {
+  // アンマウント時に自動切り替えを停止
+  tabControl.stopAutoChange();
 });
 </script>
 
