@@ -39,12 +39,25 @@ export function useTabControl(groupId: string, isMaster = false, useHash = false
   return (() => {
     const $_group: TTabGroup = $_getGroup(groupId);
 
-    // アクティブなタブIDを取得
+    /***
+     * アクティブなタブIDを取得
+     */
     const activeId = computed(() => {
       return $_group.activeId;
     });
 
-    // アクティブなタブIDを登録
+    /**
+     * 現在アクティブなタブIDのindex（何番目か）を取得
+     */
+    const activeIndex = computed((): number => {
+      return $_group.tabIdList.indexOf($_group.activeId);
+    });
+
+    /**
+     * 指定IDのタブをアクティブにする
+     * @param activeId string タブID
+     * @param isTabClick boolean タブボタンから実行する時だけ true
+     */
     const setActiveId = (activeId: string, isTabClick = false): void => {
       $_group.activeId = activeId;
 
@@ -55,35 +68,43 @@ export function useTabControl(groupId: string, isMaster = false, useHash = false
       }
     };
 
-    // 現在アクティブなタブIDのindexを取得
-    const activeIndex = computed((): number => {
-      return $_group.tabIdList.indexOf($_group.activeId);
-    });
-
-    // タブIDリストを登録
+    /**
+     * タブIDリストを登録
+     * @param idList string[]
+     */
     const setTabIdList = (idList: string[]) => {
       $_group.tabIdList = idList;
     };
 
-    // 次のタブをアクティブにする
+    /**
+     * 次のタブをアクティブにする
+     */
     const changeNextTab = () => {
       const nextIndex = (activeIndex.value + 1) % $_group.tabIdList.length;
       setActiveId($_group.tabIdList[nextIndex]);
     };
 
-    // 前のタブをアクティブにする
+    /**
+     * 前のタブをアクティブにする
+     */
     const changePrevTab = () => {
       const index = activeIndex.value - 1;
       const prevIndex = index <= -1 ? $_group.tabIdList.length - 1 : index;
       setActiveId($_group.tabIdList[prevIndex]);
     };
 
-    // 変更のリスナーを登録
+    /**
+     * アクティブタブ変更時のリスナーを登録する
+     * @param func (ev) => void
+     */
     const addChangeListener = (func: EventListenerOrEventListenerObject) => {
       $_group.events.addEventListener(EV_CHANGE, func);
     };
 
-    // クリックのリスナーを登録
+    /**
+     * クリックのリスナーを登録
+     * @param func (ev) => void
+     */
     const addClickListener = (func: EventListenerOrEventListenerObject) => {
       $_group.events.addEventListener(EV_CLICK, func);
     };
@@ -104,8 +125,8 @@ export function useTabControl(groupId: string, isMaster = false, useHash = false
 
     return {
       activeId,
-      setActiveId,
       activeIndex,
+      setActiveId,
       setTabIdList,
       changeNextTab,
       changePrevTab,
