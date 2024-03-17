@@ -42,6 +42,9 @@ const itemClicked = (id: string) => {
 
 onMounted(() => {
   // タブIDリストを登録
+  // [{id:'foo', value:'ふー'},
+  // {id:'bar', value:'ばー'}] のリストから id のみ抽出して
+  // ['foo', 'bar'] にする
   const idList = props.items.filter((item) => item.id).map((item) => item.id);
   tabControl.setTabIdList(idList);
 
