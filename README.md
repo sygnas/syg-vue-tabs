@@ -279,6 +279,43 @@ tabControl.changePrevTab();
 tabControl.changeNextTab();
 ```
 
+### Instance params
+#### activeId: string
+現在アクティブなタブのID。
+
+#### activeIndex: number
+現在アクティブなタブが何番目か。
+
+### Instance methods
+
+#### setActiveId(activeId: string, isTabClick = false): void
+- activeId : タブID
+- isTabClick : タブボタンから実行する時だけ true
+
+指定IDのタブをアクティブにする
+
+#### setTabIdList(idList: string[]): void
+- idList : 個々のタブボタンに設定した id のリスト
+
+タブIDリストを登録
+
+#### changeNextTab(): void
+次のタブをアクティブにする
+
+#### changePrevTab(): void
+前のタブをアクティブにする
+
+#### addChangeListener(func: EventListenerOrEventListenerObject): void
+- func : (ev) => void
+
+アクティブタブが変更された時に実行される関数を登録
+
+#### addClickListener(func: EventListenerOrEventListenerObject): void
+- func : (ev) => void
+
+クリック時に実行される関数を登録。
+addChangeListener() も同時に呼ばれるので注意。
+
 
 ## License
 
